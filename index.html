@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金門古厝：五行馬背解密大冒險！</title>
+    <style>
+        :root {
+            --brick-red: #A3483B;
+            --clay-orange: #D97D56;
+            --stone-gray: #F4F1EA;
+            --dark-blue: #1A365D;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background-color: var(--stone-gray);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .game-container {
+            max-width: 650px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            padding: 30px;
+            box-sizing: border-box;
+            border-top: 8px solid var(--brick-red);
+        }
+
+        h1 {
+            color: var(--brick-red);
+            text-align: center;
+            margin-top: 0;
+            font-size: 28px;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            background: #E5E5E5;
+            padding: 4px;
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .progress-step {
+            width: 35px;
+            height: 35px;
+            background: #FFF;
+            border: 3px solid #DDD;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #999;
+            z-index: 2;
+            transition: all 0.3s;
+        }
+
+        .progress-step.active {
+            border-color: var(--brick-red);
+            color: var(--brick-red);
+            background: #FDF2F0;
+        }
+
+        .progress-step.completed {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .intro {
+            background-color: #FAF6F0;
+            border-left: 4px solid var(--clay-orange);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.6;
+        }
+
+        .stage {
+            display: none;
+        }
+
+        .stage.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        .stage-title {
+            color: var(--dark-blue);
+            font-size: 22px;
+            border-bottom: 2px solid #E5E5E5;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        .story-text {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #DDD;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--clay-orange);
+        }
+
+        button {
+            background-color: var(--brick-red);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #893B30;
+        }
+
+        .error-msg {
+            color: #D32F2F;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .unlock-zone {
+            display: none;
+            background-color: #EDF7ED;
+            border: 2px dashed #4CAF50;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .photo-container {
+            width: 100%;
+            margin-top: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .next-btn {
+            background-color: var(--dark-blue);
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>金門古厝：五行馬背解密大冒險！ 🏠 ✨</h1>
+        
+        <div class="progress-bar">
+            <div class="progress-step active" id="step1">金</div>
+            <div class="progress-step" id="step2">木</div>
+            <div class="progress-step" id="step3">火</div>
+            <div class="progress-step" id="step4">土</div>
+            <div class="progress-step" id="step5">水</div>
+        </div>
+
+        <div class="intro" id="intro-box">
+            <strong>冒險者任務：</strong> 歡迎來到金門！傳統民宅的屋頂兩側藏著古老哲學的五行祕密！牆上的古老羊皮紙寫著：<strong>「金形圓、木形直、水形曲、火形銳、土形方」</strong>。你需要連續觀察並輸入正確的關鍵字喚醒 5 個馬背封印，才能解鎖隱藏的故事與真實照片喔！
+        </div>
+
+        <!-- 第一關：金 -->
+        <div class="stage active" id="stage1">
+            <div class="stage-title">第一關：圓潤飽滿的黃金守護</div>
+            <div class="story-text">
+                你來到第一座古厝前，抬頭觀察屋頂。羊皮紙線索寫著：<strong>「金形圓」</strong>。<br>
+                這個屋頂的頂端線條非常圓滑，看起來胖嘟嘟、圓滾滾的。據說以前蓋這種屋頂的主人如果缺「金」就會蓋它，或者希望能招來富貴多大宅！<br><br>
+                💡 <strong>線索：</strong> 請輸入這個外觀「圓潤」、象徵富貴的馬背名稱（四個字）。
+            </div>
+            <div class="input-group">
+                <input type="text" id="pw1" placeholder="請輸入四個字的關鍵字...">
+                <button onclick="checkStage(1, '金形馬背')">喚醒機關</button>
+            </div>
+            <div class="error-msg" id="err1">❌ 機關沒反應，提示：金形...</div>
+
+            <div class="unlock-zone" id="unlock1">
+                <h3>🎉 答對了！金之封印解除！</h3>
+                <p><strong>【故事揭密】：</strong> 這是<strong>「金形馬背」</strong>！它的頂部呈現圓弧形。古人相信缺金的人家或想要追求「富貴多宅」的家庭，建造這種屋頂能帶來滿滿的福氣！</p>
+                <div class="photo-container">
+                    <img src="jin.jpeg" alt="金形馬背">
+                </div>
+                <button class="next-btn" onclick="nextStage(1, 2)">前往下一關 ➡️</button>
+            </div>
+        </div>
+
+        <!-- 第二關：木 -->
+        <div class="stage" id="stage2">
+            <div class="stage-title">第二關：步步高升的挺拔神木</div>
+            <div class="story-text">
+                你來到第二座民宅，這個屋頂的馬背長得不太一樣。羊皮紙線索寫著：<strong>「木形直」</strong>。<br>
+                它的線條筆直、高聳，直挺挺地衝向天空。據說以前家裡如果有小孩子要讀書、考功名，長輩就會特別指定建造這種造型！<br><br>
+                💡 <strong>線索：</strong> 請輸入這個代表讀書人、能保佑「步步高升」的馬背名稱（四個字）。
+            </div>
+            <div class="input-group">
+                <input type="text" id="pw2" placeholder="請輸入四個字的關鍵字...">
+                <button onclick="checkStage(2, '木形馬背')">喚醒機關</button>
+            </div>
+            <div class="error-msg" id="err2">❌ 密碼錯誤，提示：木形...</div>
+
+            <div class="unlock-zone" id="unlock2">
+                <h3>🎉 太棒了！木之封印解除！</h3>
+                <p><strong>【故事揭密】：</strong> 這是<strong>「木形馬背」</strong>！它的外觀比較高、挺、直。在古代木代表生長與高升，所以象徵著保佑家中的讀書人能夠<strong>步步高升</strong>！</p>
+                <div class="photo-container">
+                    <img src="mu.jpg" alt="木形馬背">
+                </div>
+                <button class="next-btn" onclick="nextStage(2, 3)">前往下一關 ➡️</button>
+            </div>
+        </div>
+
+        <!-- 第三關：火 -->
+        <div class="stage" id="stage3">
+            <div class="stage-title">第三關：熊熊烈火的興旺能量</div>
+            <div class="story-text">
+                第三座古厝的屋頂充滿了張力！羊皮紙線索寫著：<strong>「火形銳 Papyrus」</strong>。<br>
+                它的邊緣不是平的也不是圓的，而是由好幾個「尖尖銳銳」的突起組合而成，看起來就像正在燃燒的烈火。古人借用它的強大能量來祈求家族興旺。<br><br>
+                💡 <strong>線索：</strong> 請輸入這個代表「發達、興旺」吉祥寓意的馬背名稱（四個字）。
+            </div>
+            <div class="input-group">
+                <input type="text" id="pw3" placeholder="請輸入四個字的關鍵字...">
+                <button onclick="checkStage(3, '火形馬背')">喚醒機關</button>
+            </div>
+            <div class="error-msg" id="err3">❌ 機關沒反應，提示：火形...</div>
+
+            <div class="unlock-zone" id="unlock3">
+                <h3>🎉 厲害喔！火之封印解除！</h3>
+                <p><strong>【故事揭密】：</strong> 這是<strong>「火形馬背」</strong>！雖然它長得像火焰一樣尖銳，但古人卻非常喜歡它带来的生命力，用它來祝福家族能夠<strong>發達、興旺</strong>！</p>
+                <div class="photo-container">
+                    <img src="huo.webp" alt="火形馬背">
+                </div>
+                <button class="next-btn" onclick="nextStage(3, 4)">前往下一關 ➡️</button>
+            </div>
+        </div>
+
+        <!-- 第四關：土 -->
+        <div class="stage" id="stage4">
+            <div class="stage-title">第四關：腳踏實地的平穩大地</div>
+            <div class="story-text">
+                第四座民宅非常沉穩。羊皮紙線索寫著：<strong>「土形方」</strong>。<br>
+                這個屋頂的馬背頂端是一條平平的橫線，兩側垂直切下來，呈現非常規則、方方正正的形狀。牆上寫著：「正的馬、踏形整、土平穩」。<br><br>
+                💡 <strong>線索：</strong> 請輸入這個象徵平穩、方正誠實的馬背名稱（四個字）。
+            </div>
+            <div class="input-group">
+                <input type="text" id="pw4" placeholder="請輸入四個字的關鍵字...">
+                <button onclick="checkStage(4, '土形馬背')">喚醒機關</button>
+            </div>
+            <div class="error-msg" id="err4">❌ 密碼錯誤，提示：土形...</div>
+
+            <div class="unlock-zone" id="unlock4">
+                <h3>🎉 太強了！土之封印解除！</h3>
+                <p><strong>【故事揭密】：</strong> 這是<strong>「土形馬背」</strong>！它的形狀在五行中是最為平穩的方正外觀。古人藉由土的厚實，來祈求家園穩固、子孫腳踏實地！</p>
+                <div class="photo-container">
+                    <img src="tu.jpg" alt="土形馬背">
+                </div>
+                <button class="next-btn" onclick="nextStage(4, 5)">前往最終終極關卡 ➡️</button>
+            </div>
+        </div>
+
+        <!-- 第五關：水（終極關卡） -->
+        <div class="stage" id="stage5">
+            <div class="stage-title">最終關：水落石出的細水長流</div>
+            <div class="story-text">
+                你終於來到了藏寶密室前！門上刻著五行最後的印記：<strong>「水形曲」</strong>。<br>
+                地上有一個古老的巨型鎖，鎖上畫著像<strong>溫柔波浪、彎彎曲曲</strong>的連續線條。據說這是當時非常有錢的「富裕家庭」才能興建的精緻屋頂封印，只要喊出它的名字，寶箱就會開啟！<br><br>
+                💡 <strong>線索：</strong> 請輸入最後一個象徵細水長流、事事順順的馬背關鍵字（四個字）。
+            </div>
+            <div class="input-group">
+                <input type="text" id="pw5" placeholder="請輸入四個字的終極密碼...">
+                <button onclick="checkStage(5, '水形馬背')">打開終極寶箱</button>
+            </div>
+            <div class="error-msg" id="err5">❌ 寶箱搖晃了一下但沒有開啟...請確認四個字關鍵字！</div>
+
+            <div class="unlock-zone" id="unlock5" style="border-color: #2196F3; background-color: #E3F2FD;">
+                <h3>🏆 五行齊聚！你成功通關了！🏆</h3>
+                <p><strong>【終極故事解密】：</strong><br>
+                恭喜你召喚了<strong>「水形馬背」</strong>[cite: 1]！這在金門傳統民宅中，通常是內部生活優渥的<strong>富裕家庭</strong>才會建造的優美波浪起伏屋頂[cite: 1]。它代表著簡報中所說的<strong>「細水長流」</strong>與富裕的象徵[cite: 1]。古人期盼著只要全家生活萬事都能<strong>「順順」</strong>、外出一生平安，就是最美滿的財富[cite: 1]！</p>
+                <div class="photo-container" style="border: 3px solid #2196F3;">
+                    <img src="shui.jpeg" alt="水形馬背">
+                </div>
+                <p style="font-size: 20px; font-weight: bold; color: var(--brick-red); margin-top: 15px;">🎉 恭喜小朋友獲得稱號：金門古厝五行建築大師！ 🏅</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function checkStage(stageNum, correctAns) {
+            const userInput = document.getElementById('pw' + stageNum).value.trim();
+            if (userInput === correctAns) {
+                document.getElementById('unlock' + stageNum).style.display = 'block';
+                document.getElementById('err' + stageNum).style.display = 'none';
+                document.getElementById('step' + stageNum).classList.add('completed');
+            } else {
+                document.getElementById('err' + stageNum).style.display = 'block';
+            }
+        }
+
+        function nextStage(current, next) {
+            document.getElementById('stage' + current).style.display = 'none';
+            document.getElementById('stage' + next).classList.add('active');
+            document.getElementById('step' + next).classList.add('active');
+            
+            if(next === 5) {
+                document.getElementById('intro-box').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
